@@ -11,24 +11,26 @@ const generateStat = () => Math.floor(Math.random() * 11) + 8;
 
 const CharacterGenerator = () => {
   const [character, setCharacter] = useState(null);
+  const [level, setLevel] = useState(1);
 
   const generateCharacter = async () => {
     // Randomly select race and class
     const race = races[Math.floor(Math.random() * races.length)];
     const classType = classes[Math.floor(Math.random() * classes.length)];
 
-    // Generate character stats
+    // Generate character stats with level adjustments
     const stats = {
-      Strength: generateStat(),
-      Dexterity: generateStat(),
-      Constitution: generateStat(),
-      Intelligence: generateStat(),
-      Wisdom: generateStat(),
-      Charisma: generateStat()
+      Strength: generateStat() + level,
+      Dexterity: generateStat() + level,
+      Constitution: generateStat() + level,
+      Intelligence: generateStat() + level,
+      Wisdom: generateStat() + level,
+      Charisma: generateStat() + level
     };
 
-    // Call OpenAI API for backstory
-    const prompt = `Create a backstory for a ${race} ${classType} character in Dungeons & Dragons.`;
+    // More detailed prompt for a richer backstory
+    const prompt = `Generate a rich backstory for a D&D character. The character is a ${race} ${classType}. Include details about their personality, motivations, and a notable event in their past.`;
+    
     const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
     const backstory = await axios.post(
@@ -36,7 +38,7 @@ const CharacterGenerator = () => {
       {
         model: "text-davinci-003",
         prompt: prompt,
-        max_tokens: 50,
+        max_tokens: 80,
       },
       {
         headers: {
@@ -59,10 +61,19 @@ const CharacterGenerator = () => {
   return (
     <div>
       <h1>D&D NPC Generator</h1>
+      <label>
+        Select Level:
+        <select value={level} onChange={(e) => setLevel(Number(e.target.value))}>
+          {Array.from({ length: 20 }, (_, i) => i + 1).map(lvl => (
+            <option key={lvl} value={lvl}>{lvl}</option>
+          ))}
+        </select>
+      </label>
       <button onClick={generateCharacter}>Generate NPC</button>
+      
       {character && (
         <div>
-          <h2>{character.race} {character.class}</h2>
+          <h2>{character.race} {character.class} - Level {level}</h2>
           <p><strong>Backstory:</strong> {character.backstory}</p>
           <h3>Character Stats:</h3>
           <ul>

@@ -11,7 +11,13 @@ const CharacterChat = ({ character }) => {
     const newUserMessage = { user: "Player", text: chatInput };
     setChatHistory([...chatHistory, newUserMessage]);
 
-    const prompt = `You are ${character.race} ${character.class} named with the backstory: ${character.backstory}. Respond to: "${chatInput}"`;
+    // Use a more detailed prompt that includes recent chat context
+    const recentChat = chatHistory.slice(-2).map(msg => `${msg.user}: ${msg.text}`).join("\n");
+    const prompt = `You are an NPC in D&D. You are a ${character.race} ${character.class} with the backstory: ${character.backstory}. Respond in character to the following conversation:
+    
+    ${recentChat}
+    Player: "${chatInput}"`;
+
     const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
     const response = await axios.post(
@@ -19,7 +25,7 @@ const CharacterChat = ({ character }) => {
       {
         model: "text-davinci-003",
         prompt: prompt,
-        max_tokens: 30,
+        max_tokens: 50,
       },
       {
         headers: {
