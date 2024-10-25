@@ -9,6 +9,8 @@ const classes = ["Fighter", "Rogue", "Wizard", "Cleric", "Bard"];
 // Generate a random value between 8-18 for D&D stats
 const generateStat = () => Math.floor(Math.random() * 11) + 8;
 
+console.log("API Key:", process.env.REACT_APP_OPENAI_API_KEY);
+
 const CharacterGenerator = () => {
   const [character, setCharacter] = useState(null);
   const [level, setLevel] = useState(1);
@@ -36,7 +38,7 @@ const CharacterGenerator = () => {
     const backstory = await axios.post(
       "https://api.openai.com/v1/completions",
       {
-        model: "text-davinci-003",
+        model: "gpt-3.5-turbo",
         prompt: prompt,
         max_tokens: 80,
       },
@@ -47,7 +49,7 @@ const CharacterGenerator = () => {
         },
       }
     ).then(response => response.data.choices[0].text.trim())
-     .catch(() => "A mysterious background...");
+     .catch(() => "A most mysterious background...");
 
     // Set the character state with all generated data
     setCharacter({
