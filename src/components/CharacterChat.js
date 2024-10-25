@@ -34,7 +34,7 @@ const CharacterChat = ({ character }) => {
         },
       }
     ).then(res => res.data.choices[0].text.trim())
-     .catch(() => "The NPC seems lost in thought...");
+     .catch(() => "They seem lost in thought...");
 
     const newNpcMessage = { user: "NPC", text: response };
     setChatHistory([...chatHistory, newUserMessage, newNpcMessage]);
